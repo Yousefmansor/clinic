@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Care Clinic — Appointment Demo</title>
+  <style>
+    /* Reset & Base Styles */
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      background-color: #f8fafc;
+      color: #0f172a;
+      display: flex;
+      justify-content: center;
+      padding: 3rem 1rem;
+    }
+
+    /* Container */
+    main {
+      width: 100%;
+      max-width: 480px;
+    }
+
+    .badge {
+      display: inline-block;
+      font-size: 0.75rem;
+      font-weight: 700;
+      letter-spacing: 0.05em;
+      color: #0284c7;
+      text-transform: uppercase;
+      margin-bottom: 0.5rem;
+    }
+
+    h1 {
+      font-size: 1.75rem;
+      font-weight: 700;
+      color: #1e293b;
+      margin-bottom: 1.5rem;
+    }
+
+    /* Card Form */
+    form {
+      background: #ffffff;
+      padding: 1.75rem;
+      border-radius: 12px;
+      border: 1px solid #e2e8f0;
+      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+      display: flex;
+      flex-direction: column;
+      gap: 1.25rem;
+    }
+
+    label {
+      display: flex;
+      flex-direction: column;
+      gap: 0.4rem;
+      font-size: 0.875rem;
+      font-weight: 600;
+      color: #334155;
+    }
+
+    /* Form Controls */
+    input, select {
+      padding: 0.65rem 0.85rem;
+      font-size: 0.95rem;
+      border: 1px solid #cbd5e1;
+      border-radius: 6px;
+      outline: none;
+      transition: border-color 0.2s, box-shadow 0.2s;
+    }
+
+    input:focus, select:focus {
+      border-color: #0284c7;
+      box-shadow: 0 0 0 3px rgba(2, 132, 199, 0.15);
+    }
+
+    button {
+      margin-top: 0.5rem;
+      padding: 0.75rem;
+      font-size: 0.95rem;
+      font-weight: 600;
+      color: #ffffff;
+      background-color: #0284c7;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: background-color 0.2s;
+    }
+
+    button:hover {
+      background-color: #0369a1;
+    }
+
+    /* Output Sections */
+    #message {
+      font-size: 0.875rem;
+      font-weight: 600;
+      color: #16a34a;
+      min-height: 1.25rem;
+    }
+
+    .preview-section {
+      margin-top: 2rem;
+    }
+
+    .preview-section h3 {
+      font-size: 0.875rem;
+      font-weight: 600;
+      color: #64748b;
+      margin-bottom: 0.5rem;
+    }
+
+    pre {
+      background-color: #0f172a;
+      color: #38bdf8;
+      padding: 1rem;
+      border-radius: 8px;
+      font-family: monospace;
+      font-size: 0.85rem;
+      overflow-x: auto;
+    }
+  </style>
+</head>
+<body>
+
+  <main>
+    <span class="badge">Care Clinic System</span>
+    <h1>Book an Appointment</h1>
+    
+    <form id="bookingForm" novalidate>
+      <label>
+        Patient Name
+        <input id="patientName" required minlength="2" placeholder="enter your first and last name">
+      </label>
+      
+      <label>
+        Phone Number
+        <input id="phone" type="tel" required placeholder="enter phone number">
+      </label>
+      
+      <label>
+        Select Doctor
+        <select id="doctorSelect" required>
+          <option value="">Choose a doctor</option>
+          <option>Dr. Sarah Ahmed (Pediatrics)</option>
+          <option>Dr. Mohamed Omar (Dentistry)</option>
+        </select>
+      </label>
+      
+      <button type="submit">Confirm Appointment</button>
+      <p id="message" role="status"></p>
+    </form>
+
+    <div class="preview-section">
+      <h3>JSON Output Preview</h3>
+      <pre id="preview">Submit the form to generate object...</pre>
+    </div>
+  </main>
+
+  <script src="app.js"></script>
+</body>
+</html>
