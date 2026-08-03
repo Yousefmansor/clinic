@@ -11,9 +11,22 @@ interface DoctorAvailability {
   availability: Availability;
 }
 
+// Implementation of the DoctorAvailability interface
+class DoctorAvailabilityReport implements DoctorAvailability {
+  doctorId: string;
+  remainingSlots: number;
+  availability: Availability;
+
+  constructor(doctorId: string, remainingSlots: number, availability: Availability) {
+    this.doctorId = doctorId;
+    this.remainingSlots = remainingSlots;
+    this.availability = availability;
+  }
+}
+
 function getDoctorAvailability(
   doctor: Doctor,
-): ApiResult<DoctorAvailability> {
+): ApiResult<DoctorAvailabilityReport> {
   const remaining = Math.max(doctor.maxSlotsPerDay - doctor.bookedSlots, 0);
 
   if (doctor.status !== 'active') {
@@ -24,11 +37,9 @@ function getDoctorAvailability(
     return failure(`No available slots for Dr. ${doctor.name} today`);
   }
 
-  return success({
-    doctorId: doctor.id,
-    remainingSlots: remaining,
-    availability: 'available',
-  });
+  return success(
+    new DoctorAvailabilityReport(doctor.id, remaining, 'available')
+  );
 }
 
-export { Availability, DoctorAvailability, getDoctorAvailability };
+export { Availability, DoctorAvailability, DoctorAvailabilityReport, getDoctorAvailability };

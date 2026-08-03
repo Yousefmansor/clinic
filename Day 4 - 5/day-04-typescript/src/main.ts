@@ -1,7 +1,7 @@
 // src/main.ts
 
 import { Doctor } from './models/doctor.types';
-import { getDoctorAvailability } from './doctor-availability';
+import { getDoctorAvailability, DoctorAvailabilityReport } from './doctor-availability';
 
 const drAhmed: Doctor = {
   id: 'D001',
@@ -35,7 +35,8 @@ const doctors = [drAhmed, drSara, drFaisal];
 for (const doctor of doctors) {
   const result = getDoctorAvailability(doctor);
   if (result.ok) {
-    console.log(`${result.data.doctorId} (${result.data.availability}) - remaining: ${result.data.remainingSlots} slots`);
+    const report = result.data as DoctorAvailabilityReport;
+    console.log(`${report.doctorId} (${report.availability}) - remaining: ${report.remainingSlots} slots`);
   } else {
     console.log(`FAILED: ${result.error}`);
   }
