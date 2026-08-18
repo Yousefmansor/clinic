@@ -1,55 +1,26 @@
-import { model, Schema } from "mongoose";
+import mongoose, { Schema, type Document } from "mongoose";
 
-export type DoctorStatus = "active" | "inactive" | "on-leave";
-
-export interface DoctorDocument {
+export interface IDoctor extends Document {
   name: string;
   specialty: string;
   phone: string;
-  status: DoctorStatus;
   maxSlotsPerDay: number;
-  bookedSlots: number;
-  createdAt: Date;
-  updatedAt: Date;
+  status: "active" | "inactive" | "on-leave";
 }
 
-const doctorSchema = new Schema<DoctorDocument>(
+const doctorSchema = new Schema<IDoctor>(
   {
-    name: {
-      type: String,
-      required: true,
-      trim: true,
-    },
-    specialty: {
-      type: String,
-      required: true,
-      trim: true,
-    },
-    phone: {
-      type: String,
-      required: true,
-      trim: true,
-    },
+    name: { type: String, required: true },
+    specialty: { type: String, required: true },
+    phone: { type: String, required: true },
+    maxSlotsPerDay: { type: Number, default: 10 },
     status: {
       type: String,
       enum: ["active", "inactive", "on-leave"],
       default: "active",
     },
-    maxSlotsPerDay: {
-      type: Number,
-      required: true,
-      min: 1,
-      default: 10,
-    },
-    bookedSlots: {
-      type: Number,
-      default: 0,
-      min: 0,
-    },
   },
-  {
-    timestamps: true,
-  }
+  { timestamps: true },
 );
 
-export const Doctor = model<DoctorDocument>("Doctor", doctorSchema);
+export const Doctor = mongoose.model<IDoctor>("Doctor", doctorSchema);

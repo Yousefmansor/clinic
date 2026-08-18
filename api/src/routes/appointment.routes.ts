@@ -1,18 +1,13 @@
 import { Router } from "express";
-import {
-  createAppointment,
-  deleteAppointment,
-  getAppointments,
-  getAppointmentById,
-  updateAppointment,
-} from "../controllers/appointment.controller";
+import * as appointmentController from "../controllers/appointment.controller";
+import { requireAdmin } from "../middleware/auth";
 
 const router = Router();
 
-router.post("/", createAppointment);
-router.get("/", getAppointments);
-router.get("/:id", getAppointmentById);
-router.patch("/:id", updateAppointment);
-router.delete("/:id", deleteAppointment);
+router.get("/", requireAdmin, appointmentController.list);
+router.get("/today", requireAdmin, appointmentController.today);
+router.post("/", appointmentController.create);
+router.patch("/:id/status", requireAdmin, appointmentController.updateStatus);
+router.delete("/:id", requireAdmin, appointmentController.remove);
 
 export default router;

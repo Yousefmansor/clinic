@@ -2,125 +2,112 @@ import type { Request, Response } from "express";
 import { Appointment } from "../models/appointment.model";
 import { Doctor } from "../models/doctor.model";
 
-// Create a new appointment
-export async function createAppointment(request: Request, response: Response): Promise<void> {
-  try {
-    const { doctorId } = request.body;
-
-    // Check if doctor has available slots
-    const doctor = await Doctor.findById(doctorId);
-
-    if (!doctor) {
-      response.status(404).json({ success: false, message: "Doctor not found" });
-      return;
-    }
-
-    if (doctor.status !== "active") {
-      response.status(400).json({
-        success: false,
-        message: "Doctor is not available for appointments",
-      });
-      return;
-    }
-
-    const remaining = Math.max(doctor.maxSlotsPerDay - doctor.bookedSlots, 0);
-
-    if (remaining === 0) {
-      response.status(400).json({
-        success: false,
-        message: "No available slots for this doctor today",
-      });
-      return;
-    }
-
-    // Create appointment
-    const appointment = await Appointment.create(request.body);
-
-    // Update booked slots
-    doctor.bookedSlots = Math.min(doctor.bookedSlots + 1, doctor.maxSlotsPerDay);
-    await doctor.save();
-
-    response.status(201).json({ success: true, data: appointment });
-  } catch (error) {
-    response.status(400).json({
-      success: false,
-      message: error instanceof Error ? error.message : "Could not create appointment",
-    });
-  }
+export async function list(req: Request, res: Response): Promise<void> {
+  const appointments = await Appointment.find()
+    .populate("patient")
+    .populate("doctor")
+    .sort({ date: -1, time: 1 });
+  res.json({ success: true, data: appointments });
 }
 
-// Get all appointments
-export async function getAppointments(_request: Request, response: Response): Promise<void> {
-  try {
-    const appointments = await Appointment.find()
-      .populate("patientId")
-      .populate("doctorId")
-      .sort({ createdAt: -1 });
+export async function today(req: Request, res: Response): Promise<void> {
+  // اليوم بالتوقيت المحلي فقط (نفس طريقة تخزين التاريخ في create)
+  // نستخدم مقارنة نصية لأن التاريخ يُخزن كـ Midnight UTC
+  const now = new Date();
+  const todayStr = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, "0")}-${String(now.getDate()).padStart(2, "0")}`;
 
-    response.json({ success: true, count: appointments.length, data: appointments });
-  } catch (error) {
-    response.status(500).json({ success: false, message: "Could not load appointments" });
-  }
+  const appointments = await Appointment.find({
+    date: {
+      $gte: new Date(`${todayStr}T00:00:00.000Z`),
+      $lt: new Date(`${todayStr}T23:59:59.999Z`),
+    },
+  })
+    .populate("patient")
+    .populate("doctor")
+    .sort({ time: 1 });
+
+  const total = await Appointment.countDocuments({
+    date: {
+      $gte: new Date(`${todayStr}T00:00:00.000Z`),
+      $lt: new Date(`${todayStr}T23:59:59.999Z`),
+    },
+  });
+  const newPatients = await Appointment.countDocuments({
+    date: {
+      $gte: new Date(`${todayStr}T00:00:00.000Z`),
+      $lt: new Date(`${todayStr}T23:59:59.999Z`),
+    },
+    visitType: "new",
+  });
+
+  res.json({ success: true, data: { appointments, total, newPatients } });
 }
 
-// Get a single appointment by id
-export async function getAppointmentById(request: Request, response: Response): Promise<void> {
-  try {
-    const appointment = await Appointment.findById(request.params.id)
-      .populate("patientId")
-      .populate("doctorId");
+export async function create(req: Request, res: Response): Promise<void> {
+  const { doctorId, date, time, patientId, visitType, reason } = req.body;
 
-    if (!appointment) {
-      response.status(404).json({ success: false, message: "Appointment not found" });
-      return;
-    }
-
-    response.json({ success: true, data: appointment });
-  } catch (error) {
-    response.status(400).json({ success: false, message: "Invalid appointment id" });
+  const doctor = await Doctor.findById(doctorId);
+  if (!doctor) {
+    res.status(404).json({ success: false, message: "Doctor not found" });
+    return;
   }
+
+  if (doctor.status !== "active") {
+    res.status(400).json({ success: false, message: "Doctor is not available" });
+    return;
+  }
+
+  // check slot availability
+  const booked = await Appointment.countDocuments({
+    doctor: doctorId,
+    date: new Date(date),
+    time,
+  });
+
+  if (booked > 0) {
+    res
+      .status(400)
+      .json({ success: false, message: "This time slot is already booked" });
+    return;
+  }
+
+  const appointment = await Appointment.create({
+    doctor: doctorId,
+    patient: patientId,
+    date: new Date(date),
+    time,
+    visitType: visitType || "new",
+    reason: reason || [],
+  });
+
+  res.status(201).json({ success: true, data: appointment });
 }
 
-// Update appointment status
-export async function updateAppointment(request: Request, response: Response): Promise<void> {
-  try {
-    const appointment = await Appointment.findByIdAndUpdate(
-      request.params.id,
-      request.body,
-      { new: true, runValidators: true }
-    );
+export async function updateStatus(
+  req: Request,
+  res: Response,
+): Promise<void> {
+  const { status } = req.body as { status: string };
+  const appointment = await Appointment.findByIdAndUpdate(
+    req.params.id,
+    { status },
+    { new: true },
+  ).populate("patient").populate("doctor");
 
-    if (!appointment) {
-      response.status(404).json({ success: false, message: "Appointment not found" });
-      return;
-    }
-
-    response.json({ success: true, data: appointment });
-  } catch (error) {
-    response.status(400).json({
-      success: false,
-      message: error instanceof Error ? error.message : "Could not update appointment",
-    });
+  if (!appointment) {
+    res.status(404).json({ success: false, message: "Appointment not found" });
+    return;
   }
+  res.json({ success: true, data: appointment });
 }
 
-// Delete an appointment
-export async function deleteAppointment(request: Request, response: Response): Promise<void> {
-  try {
-    const appointment = await Appointment.findByIdAndDelete(request.params.id);
-
-    if (!appointment) {
-      response.status(404).json({ success: false, message: "Appointment not found" });
-      return;
-    }
-
-    // Reduce booked slots
-    await Doctor.findByIdAndUpdate(appointment.doctorId, {
-      $inc: { bookedSlots: -1 },
-    });
-
-    response.json({ success: true, message: "Appointment deleted" });
-  } catch (error) {
-    response.status(400).json({ success: false, message: "Invalid appointment id" });
+export async function remove(req: Request, res: Response): Promise<void> {
+  const appointment = await Appointment.findByIdAndDelete(req.params.id);
+  if (!appointment) {
+    res
+      .status(404)
+      .json({ success: false, message: "Appointment not found" });
+    return;
   }
+  res.json({ success: true, message: "Deleted" });
 }

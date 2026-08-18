@@ -1,56 +1,33 @@
-import { model, Schema, Types } from "mongoose";
+import mongoose, { Schema, type Document, type Types } from "mongoose";
 
-export type AppointmentStatus = "pending" | "confirmed" | "cancelled";
-
-export interface AppointmentDocument {
-  patientId: Types.ObjectId;
-  doctorId: Types.ObjectId;
-  date: string;
+export interface IAppointment extends Document {
+  patient: Types.ObjectId;
+  doctor: Types.ObjectId;
+  date: Date;
   time: string;
-  status: AppointmentStatus;
-  reason: string;
-  createdAt: Date;
-  updatedAt: Date;
+  visitType: "new" | "returning";
+  reason: string[];
+  status: "pending" | "confirmed" | "cancelled";
 }
 
-const appointmentSchema = new Schema<AppointmentDocument>(
+const appointmentSchema = new Schema<IAppointment>(
   {
-    patientId: {
-      type: Schema.Types.ObjectId,
-      ref: "Patient",
-      required: true,
-    },
-    doctorId: {
-      type: Schema.Types.ObjectId,
-      ref: "Doctor",
-      required: true,
-    },
-    date: {
-      type: String,
-      required: true,
-    },
-    time: {
-      type: String,
-      required: true,
-      trim: true,
-    },
+    patient: { type: Schema.Types.ObjectId, ref: "Patient", required: true },
+    doctor: { type: Schema.Types.ObjectId, ref: "Doctor", required: true },
+    date: { type: Date, required: true },
+    time: { type: String, required: true },
+    visitType: { type: String, enum: ["new", "returning"], default: "new" },
+    reason: [{ type: String }],
     status: {
       type: String,
       enum: ["pending", "confirmed", "cancelled"],
       default: "pending",
     },
-    reason: {
-      type: String,
-      default: "",
-      trim: true,
-    },
   },
-  {
-    timestamps: true,
-  }
+  { timestamps: true },
 );
 
-export const Appointment = model<AppointmentDocument>(
+export const Appointment = mongoose.model<IAppointment>(
   "Appointment",
-  appointmentSchema
+  appointmentSchema,
 );

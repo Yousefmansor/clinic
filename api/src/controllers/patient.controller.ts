@@ -1,80 +1,41 @@
 import type { Request, Response } from "express";
 import { Patient } from "../models/patient.model";
 
-// Create a new patient
-export async function createPatient(request: Request, response: Response): Promise<void> {
-  try {
-    const patient = await Patient.create(request.body);
-    response.status(201).json({ success: true, data: patient });
-  } catch (error) {
-    response.status(400).json({
-      success: false,
-      message: error instanceof Error ? error.message : "Could not create patient",
-    });
-  }
+export async function list(req: Request, res: Response): Promise<void> {
+  const patients = await Patient.find();
+  res.json({ success: true, data: patients });
 }
 
-// Get all patients
-export async function getPatients(_request: Request, response: Response): Promise<void> {
-  try {
-    const patients = await Patient.find().sort({ createdAt: -1 });
-    response.json({ success: true, count: patients.length, data: patients });
-  } catch (error) {
-    response.status(500).json({ success: false, message: "Could not load patients" });
+export async function get(req: Request, res: Response): Promise<void> {
+  const patient = await Patient.findById(req.params.id);
+  if (!patient) {
+    res.status(404).json({ success: false, message: "Patient not found" });
+    return;
   }
+  res.json({ success: true, data: patient });
 }
 
-// Get a single patient by id
-export async function getPatientById(request: Request, response: Response): Promise<void> {
-  try {
-    const patient = await Patient.findById(request.params.id);
-
-    if (!patient) {
-      response.status(404).json({ success: false, message: "Patient not found" });
-      return;
-    }
-
-    response.json({ success: true, data: patient });
-  } catch (error) {
-    response.status(400).json({ success: false, message: "Invalid patient id" });
-  }
+export async function create(req: Request, res: Response): Promise<void> {
+  const patient = await Patient.create(req.body);
+  res.status(201).json({ success: true, data: patient });
 }
 
-// Update a patient by id
-export async function updatePatient(request: Request, response: Response): Promise<void> {
-  try {
-    const patient = await Patient.findByIdAndUpdate(
-      request.params.id,
-      request.body,
-      { new: true, runValidators: true }
-    );
-
-    if (!patient) {
-      response.status(404).json({ success: false, message: "Patient not found" });
-      return;
-    }
-
-    response.json({ success: true, data: patient });
-  } catch (error) {
-    response.status(400).json({
-      success: false,
-      message: error instanceof Error ? error.message : "Could not update patient",
-    });
+export async function update(req: Request, res: Response): Promise<void> {
+  const patient = await Patient.findByIdAndUpdate(req.params.id, req.body, {
+    new: true,
+  });
+  if (!patient) {
+    res.status(404).json({ success: false, message: "Patient not found" });
+    return;
   }
+  res.json({ success: true, data: patient });
 }
 
-// Delete a patient by id
-export async function deletePatient(request: Request, response: Response): Promise<void> {
-  try {
-    const patient = await Patient.findByIdAndDelete(request.params.id);
-
-    if (!patient) {
-      response.status(404).json({ success: false, message: "Patient not found" });
-      return;
-    }
-
-    response.json({ success: true, message: "Patient deleted" });
-  } catch (error) {
-    response.status(400).json({ success: false, message: "Invalid patient id" });
+export async function remove(req: Request, res: Response): Promise<void> {
+  const patient = await Patient.findByIdAndDelete(req.params.id);
+  if (!patient) {
+    res.status(404).json({ success: false, message: "Patient not found" });
+    return;
   }
+  res.json({ success: true, message: "Deleted" });
 }

@@ -1,25 +1,22 @@
 import "dotenv/config";
-
+import mongoose from "mongoose";
 import app from "./app";
-import { connectToDatabase } from "./config/database";
+import { seedAdmin } from "./controllers/auth.controller";
 
-const port = Number(process.env.PORT ?? 3000);
+const PORT = process.env.PORT || 4000;
+const MONGO_URI = process.env.MONGO_URI || "mongodb://localhost:27017/care-clinic";
 
-const mongoUri = process.env.MONGODB_URI?.trim() || "";
-
-if (!mongoUri || mongoUri === "undefined" || mongoUri === "null") {
-  throw new Error("MONGODB_URI is required");
-}
-
-async function startServer(): Promise<void> {
-  await connectToDatabase(mongoUri);
-
-  app.listen(port, () => {
-    console.log(`API listening on port ${port}`);
+// الاتصال بقاعدة البيانات وتشغيل السيرفر
+mongoose
+  .connect(MONGO_URI)
+  .then(async () => {
+    console.log("Connected to MongoDB");
+    // إنشاء أدمن افتراضي لو مش موجود
+    await seedAdmin();
+    app.listen(PORT, () => {
+      console.log(`Server running on port ${PORT}`);
+    });
+  })
+  .catch((err) => {
+    console.error("MongoDB connection error:", err);
   });
-}
-
-startServer().catch((error: unknown) => {
-  console.error("Failed to start server", error);
-  process.exit(1);
-});

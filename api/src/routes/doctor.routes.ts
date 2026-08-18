@@ -1,18 +1,13 @@
 import { Router } from "express";
-import {
-  createDoctor,
-  deleteDoctor,
-  getDoctorById,
-  getDoctors,
-  updateDoctor,
-} from "../controllers/doctor.controller";
+import * as doctorController from "../controllers/doctor.controller";
+import { requireAdmin } from "../middleware/auth";
 
 const router = Router();
 
-router.post("/", createDoctor);
-router.get("/", getDoctors);
-router.get("/:id", getDoctorById);
-router.patch("/:id", updateDoctor);
-router.delete("/:id", deleteDoctor);
+router.get("/", doctorController.list);
+router.get("/:id", doctorController.get);
+router.post("/", requireAdmin, doctorController.create);
+router.patch("/:id", requireAdmin, doctorController.update);
+router.delete("/:id", requireAdmin, doctorController.remove);
 
 export default router;

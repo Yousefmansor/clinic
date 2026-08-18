@@ -1,13 +1,15 @@
 import { Routes } from "@angular/router";
-
-import { Doctors } from "./pages/doctors/doctors";
-import { Patients } from "./pages/patients/patients";
-import { Appointments } from "./pages/appointments/appointments";
+import { DoctorsComponent } from "./doctors/doctors.component";
+import { BookingComponent } from "./booking/booking.component";
+import { AdminLoginComponent } from "./admin-login/admin-login.component";
+import { DashboardComponent } from "./dashboard/dashboard.component";
+import { adminGuard } from "./admin.guard";
 
 export const routes: Routes = [
-  { path: "", redirectTo: "doctors", pathMatch: "full" },
-  { path: "doctors", component: Doctors },
-  { path: "patients", component: Patients },
-  { path: "appointments", component: Appointments },
-  { path: "**", redirectTo: "doctors" },
+  { path: "", redirectTo: "/doctors", pathMatch: "full" },
+  { path: "doctors", component: DoctorsComponent },
+  { path: "booking/:doctorId", component: BookingComponent },
+  { path: "admin", component: AdminLoginComponent },
+  { path: "dashboard", component: DashboardComponent, canActivate: [adminGuard] },
+  { path: "**", redirectTo: "/doctors" },
 ];

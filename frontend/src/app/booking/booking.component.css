@@ -1,0 +1,279 @@
+.booking-page {
+  max-width: 760px;
+  margin: 24px auto;
+  padding: 0 20px;
+}
+
+.booking-card {
+  background: #fff;
+  border: 1px solid #e5e7eb;
+  border-radius: 12px;
+  padding: 28px;
+}
+
+.booking-card h2 {
+  margin: 4px 0 6px;
+  font-size: 24px;
+  color: #111827;
+}
+
+.subtitle {
+  margin: 0 0 18px;
+  color: #6b7280;
+  font-size: 14px;
+}
+
+/* ---------- الـ Stepper ---------- */
+.stepper {
+  display: flex;
+  align-items: center;
+  margin-bottom: 24px;
+}
+
+.step-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  opacity: 0.45;
+}
+
+.step-item.active {
+  opacity: 1;
+}
+
+.step-num {
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  background: #e5e7eb;
+  color: #6b7280;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 15px;
+}
+
+.step-item.active .step-num {
+  background: #0d9488;
+  color: #fff;
+}
+
+.step-title {
+  font-size: 13px;
+  font-weight: 700;
+  color: #111827;
+}
+
+.step-desc {
+  font-size: 12px;
+  color: #6b7280;
+}
+
+.step-line {
+  flex: 1;
+  height: 2px;
+  background: #e5e7eb;
+  margin: 0 10px;
+}
+
+.step-line.done {
+  background: #0d9488;
+}
+
+/* ---------- النموذج ---------- */
+.form-section h4 {
+  margin: 0 0 14px;
+  font-size: 16px;
+  color: #111827;
+}
+
+.form-row {
+  display: flex;
+  gap: 18px;
+  margin-bottom: 14px;
+}
+
+.form-group {
+  flex: 1;
+}
+
+.form-group label {
+  display: block;
+  font-size: 13px;
+  font-weight: 600;
+  margin-bottom: 6px;
+  color: #374151;
+}
+
+.form-group input,
+.form-group select {
+  width: 100%;
+  padding: 9px 12px;
+  border: 1px solid #d1d5db;
+  border-radius: 6px;
+  font-size: 14px;
+  box-sizing: border-box;
+  background: #fff;
+}
+
+.form-group input:focus,
+.form-group select:focus {
+  outline: none;
+  border-color: #0d9488;
+}
+
+.phone-row {
+  display: flex;
+  gap: 8px;
+}
+
+.phone-row select {
+  width: 90px;
+}
+
+.datetime-row {
+  display: flex;
+  gap: 18px;
+}
+
+/* ---------- شبكة الأوقات ---------- */
+.time-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 8px;
+  margin-bottom: 6px;
+}
+
+.time-chip {
+  padding: 7px 4px;
+  border: 1px solid #d1d5db;
+  border-radius: 6px;
+  background: #fff;
+  font-size: 12.5px;
+  cursor: pointer;
+  color: #374151;
+}
+
+.time-chip.selected {
+  background: #0d9488;
+  color: #fff;
+  border-color: #0d9488;
+}
+
+.hint {
+  color: #9ca3af;
+  font-size: 12px;
+}
+
+/* ---------- خيارات الزيارة ---------- */
+.radio-row {
+  display: flex;
+  gap: 20px;
+}
+
+.radio-label,
+.checkbox-label {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 14px;
+  color: #374151;
+  cursor: pointer;
+  margin-bottom: 6px;
+}
+
+/* ---------- التأكيد والنجاح ---------- */
+.confirm-box,
+.success-box {
+  background: #f0fdfa;
+  border: 1px solid #99f6e4;
+  border-radius: 10px;
+  padding: 20px;
+  margin-bottom: 16px;
+}
+
+.success-box {
+  text-align: center;
+}
+
+.check {
+  width: 48px;
+  height: 48px;
+  margin: 0 auto 12px;
+  border-radius: 50%;
+  background: #0d9488;
+  color: #fff;
+  font-size: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.success-box h3 {
+  margin: 0 0 6px;
+  color: #111827;
+}
+
+.summary {
+  list-style: none;
+  padding: 0;
+  margin: 12px 0;
+  text-align: left;
+  font-size: 14px;
+  color: #374151;
+}
+
+.summary li {
+  padding: 4px 0;
+}
+
+/* ---------- الأزرار ---------- */
+.form-actions {
+  display: flex;
+  justify-content: center;
+  gap: 12px;
+  margin-top: 20px;
+}
+
+.btn {
+  padding: 10px 28px;
+  border-radius: 6px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  border: 1px solid transparent;
+}
+
+.btn-primary {
+  background: #1e3a5f;
+  color: #fff;
+}
+
+.btn-primary:hover {
+  background: #162c48;
+}
+
+.btn-outline {
+  background: #fff;
+  border-color: #d1d5db;
+  color: #374151;
+}
+
+.btn-outline:hover {
+  background: #f3f4f6;
+}
+
+.error {
+  color: #b91c1c;
+  font-size: 14px;
+  text-align: center;
+  margin: 8px 0;
+}
+
+.loading-text {
+  color: #6b7280;
+  font-size: 14px;
+  padding: 24px 0;
+  text-align: center;
+}

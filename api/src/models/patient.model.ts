@@ -1,46 +1,18 @@
-import { model, Schema } from "mongoose";
+import mongoose, { Schema, type Document } from "mongoose";
 
-export interface PatientDocument {
+export interface IPatient extends Document {
   name: string;
   phone: string;
-  age: number;
-  gender: string;
-  notes: string;
-  createdAt: Date;
-  updatedAt: Date;
+  countryCode: string;
 }
 
-const patientSchema = new Schema<PatientDocument>(
+const patientSchema = new Schema<IPatient>(
   {
-    name: {
-      type: String,
-      required: true,
-      trim: true,
-    },
-    phone: {
-      type: String,
-      required: true,
-      trim: true,
-    },
-    age: {
-      type: Number,
-      required: true,
-      min: 0,
-    },
-    gender: {
-      type: String,
-      enum: ["male", "female"],
-      default: "male",
-    },
-    notes: {
-      type: String,
-      default: "",
-      trim: true,
-    },
+    name: { type: String, required: true },
+    phone: { type: String, required: true },
+    countryCode: { type: String, default: "+996" },
   },
-  {
-    timestamps: true,
-  }
+  { timestamps: true },
 );
 
-export const Patient = model<PatientDocument>("Patient", patientSchema);
+export const Patient = mongoose.model<IPatient>("Patient", patientSchema);

@@ -1,24 +1,25 @@
 import express from "express";
 import cors from "cors";
-
-import doctorRouter from "./routes/doctor.routes";
-import patientRouter from "./routes/patient.routes";
-import appointmentRouter from "./routes/appointment.routes";
+import authRoutes from "./routes/auth.routes";
+import doctorRoutes from "./routes/doctor.routes";
+import patientRoutes from "./routes/patient.routes";
+import appointmentRoutes from "./routes/appointment.routes";
 
 const app = express();
 
+// السماح بالطلبات من الفرونت إند
+app.use(cors());
 app.use(express.json());
 
-app.use(cors({ origin: "http://localhost:4200" }));
+// تسجيل الروابط الأساسية
+app.use("/api/auth", authRoutes);
+app.use("/api/doctors", doctorRoutes);
+app.use("/api/patients", patientRoutes);
+app.use("/api/appointments", appointmentRoutes);
 
-// Health check
-app.get("/api/health", (_request, response) => {
-  response.json({ success: true, message: "Care Clinic API is running" });
+// التأكد من أن السيرفر شغال
+app.get("/api/health", (req, res) => {
+  res.json({ status: "ok" });
 });
-
-// Routes
-app.use("/api/doctors", doctorRouter);
-app.use("/api/patients", patientRouter);
-app.use("/api/appointments", appointmentRouter);
 
 export default app;

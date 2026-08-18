@@ -1,0 +1,164 @@
+.page {
+  display: flex;
+  gap: 24px;
+  max-width: 1100px;
+  margin: 24px auto;
+  padding: 0 20px;
+  align-items: flex-start;
+}
+
+/* ---------- الفلتر الجانبي ---------- */
+.filters {
+  width: 240px;
+  background: #fff;
+  border: 1px solid #e5e7eb;
+  border-radius: 10px;
+  padding: 18px;
+  flex-shrink: 0;
+}
+
+.filters h3 {
+  margin: 0 0 14px;
+  font-size: 16px;
+  color: #111827;
+}
+
+.filter-group {
+  margin-bottom: 12px;
+}
+
+.filter-group label {
+  display: block;
+  font-size: 13px;
+  font-weight: 600;
+  margin-bottom: 6px;
+  color: #374151;
+}
+
+.filter-group select {
+  width: 100%;
+  padding: 8px 10px;
+  border: 1px solid #d1d5db;
+  border-radius: 6px;
+  font-size: 14px;
+  background: #fff;
+}
+
+.filter-actions button {
+  width: 100%;
+}
+
+/* ---------- المحتوى ---------- */
+.content {
+  flex: 1;
+  min-width: 0;
+}
+
+.content-header h2 {
+  margin: 0 0 4px;
+  font-size: 22px;
+  color: #111827;
+}
+
+.subtitle {
+  margin: 0 0 18px;
+  color: #6b7280;
+  font-size: 14px;
+}
+
+/* ---------- شبكة الكروت ---------- */
+.doctor-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 16px;
+}
+
+@media (max-width: 900px) {
+  .doctor-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  .page {
+    flex-direction: column;
+  }
+  .filters {
+    width: 100%;
+  }
+}
+
+@media (max-width: 500px) {
+  .doctor-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.doctor-card {
+  background: #fff;
+  border: 1px solid #e5e7eb;
+  border-radius: 10px;
+  padding: 20px 14px;
+  text-align: center;
+}
+
+.avatar {
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  background: #ccfbf1;
+  color: #0d9488;
+  font-weight: 700;
+  font-size: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 10px;
+}
+
+.doctor-card h4 {
+  margin: 0 0 4px;
+  font-size: 15px;
+  color: #111827;
+}
+
+.doctor-card .specialty {
+  margin: 0 0 8px;
+  font-size: 13px;
+  color: #6b7280;
+}
+
+.badge.unavailable {
+  display: inline-block;
+  background: #fee2e2;
+  color: #b91c1c;
+  font-size: 12px;
+  padding: 2px 10px;
+  border-radius: 999px;
+  margin-bottom: 10px;
+}
+
+.btn-book {
+  width: 100%;
+  padding: 8px;
+  background: #f3f4f6;
+  border: 1px solid #d1d5db;
+  border-radius: 6px;
+  font-size: 13px;
+  cursor: pointer;
+  color: #374151;
+}
+
+.btn-book:not(:disabled):hover {
+  background: #0d9488;
+  color: #fff;
+  border-color: #0d9488;
+}
+
+.btn-book:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.loading-text {
+  color: #6b7280;
+  font-size: 14px;
+  padding: 24px 0;
+}

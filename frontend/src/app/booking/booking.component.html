@@ -1,0 +1,167 @@
+<div class="booking-page">
+  <div class="booking-card">
+    <!-- خطوات الحجز (Stepper) -->
+    <div class="stepper">
+      <div class="step-item" [class.active]="step === 1">
+        <div class="step-num">1</div>
+        <div>
+          <div class="step-title">Step 1</div>
+          <div class="step-desc">Patient Information</div>
+        </div>
+      </div>
+      <div class="step-line" [class.done]="step === 2"></div>
+      <div class="step-item" [class.active]="step === 2">
+        <div class="step-num">2</div>
+        <div>
+          <div class="step-title">Step 2</div>
+          <div class="step-desc">Date & Time</div>
+        </div>
+      </div>
+      <div class="step-line"></div>
+      <div class="step-item" [class.active]="done">
+        <div class="step-num">3</div>
+        <div>
+          <div class="step-title">Step 3</div>
+          <div class="step-desc">Confirm</div>
+        </div>
+      </div>
+    </div>
+
+    <h2>Booking Form</h2>
+    @if (doctor) {
+      <p class="subtitle">Booking with <strong>{{ doctor.name }}</strong> — {{ doctor.specialty }}</p>
+    }
+
+    @if (loading) {
+      <p class="loading-text">Loading doctor...</p>
+    } @else if (!doctor) {
+      <p class="loading-text">Doctor not found.</p>
+    } @else if (done) {
+      <!-- رسالة النجاح بعد الحجز -->
+      <div class="success-box">
+        <div class="check">&#10003;</div>
+        <h3>Booking Confirmed!</h3>
+        <p>Your appointment has been booked successfully.</p>
+        <ul class="summary">
+          <li><strong>Doctor:</strong> {{ doctor.name }} ({{ doctor.specialty }})</li>
+          <li><strong>Patient:</strong> {{ fullName }}</li>
+          <li><strong>Date:</strong> {{ date }} at {{ time }}</li>
+          <li><strong>Type:</strong> {{ visitType === "new" ? "New Patient" : "Returning Patient" }}</li>
+        </ul>
+        <button class="btn btn-primary" (click)="goHome()">Back to Doctors</button>
+      </div>
+    } @else {
+      <p class="subtitle">Please fill in the following information to book an appointment.</p>
+
+      <!-- الخطوة 1: بيانات المريض -->
+      @if (step === 1) {
+        <div class="form-section">
+          <h4>Patient Information</h4>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label>Full Name *</label>
+              <input
+                type="text"
+                [(ngModel)]="fullName"
+                placeholder="Enter full name"
+              />
+            </div>
+            <div class="form-group">
+              <label>Date & Time *</label>
+              <div class="datetime-row">
+                <div class="form-group">
+                  <label>Select Date *</label>
+                  <input type="date" [(ngModel)]="date" />
+                </div>
+                <div class="form-group">
+                  <label>Select Time *</label>
+                  <div class="time-grid">
+                    @for (t of timeSlots; track t) {
+                      <button
+                        type="button"
+                        class="time-chip"
+                        [class.selected]="time === t"
+                        (click)="time = t"
+                      >
+                        {{ t }}
+                      </button>
+                    }
+                  </div>
+                  <small class="hint">All times are according to your local time zone</small>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label>Phone Number *</label>
+              <div class="phone-row">
+                <select [(ngModel)]="countryCode">
+                  @for (c of countryCodes; track c) {
+                    <option [value]="c">{{ c }}</option>
+                  }
+                </select>
+                <input type="text" [(ngModel)]="phone" placeholder="Enter phone number" />
+              </div>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label>Visit Type</label>
+            <div class="radio-row">
+              <label class="radio-label">
+                <input type="radio" name="visit" value="new" [(ngModel)]="visitType" />
+                New Patient
+              </label>
+              <label class="radio-label">
+                <input type="radio" name="visit" value="returning" [(ngModel)]="visitType" />
+                Returning Patient
+              </label>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label class="checkbox-label">
+              <input type="checkbox" [(ngModel)]="generalConsultation" />
+              General Consultation
+            </label>
+            <label class="checkbox-label">
+              <input type="checkbox" [(ngModel)]="followUp" />
+              Follow up
+            </label>
+          </div>
+        </div>
+      } @else {
+        <!-- الخطوة 2: التأكيد -->
+        <div class="confirm-box">
+          <h4>Confirm Your Booking</h4>
+          <ul class="summary">
+            <li><strong>Name:</strong> {{ fullName }}</li>
+            <li><strong>Phone:</strong> {{ countryCode }} {{ phone }}</li>
+            <li><strong>Doctor:</strong> {{ doctor.name }} — {{ doctor.specialty }}</li>
+            <li><strong>Date:</strong> {{ date }} at {{ time }}</li>
+            <li><strong>Type:</strong> {{ visitType === "new" ? "New Patient" : "Returning Patient" }}</li>
+          </ul>
+        </div>
+      }
+
+      @if (message) {
+        <p class="error">{{ message }}</p>
+      }
+
+      <div class="form-actions">
+        @if (step === 2) {
+          <button class="btn btn-outline" (click)="prevStep()">Back</button>
+        }
+        @if (step === 1) {
+          <button class="btn btn-primary" (click)="nextStep()">Next</button>
+        }
+        @if (step === 2) {
+          <button class="btn btn-primary" (click)="confirm()">Confirm Booking</button>
+        }
+      </div>
+    }
+  </div>
+</div>

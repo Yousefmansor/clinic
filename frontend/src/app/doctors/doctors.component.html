@@ -1,0 +1,54 @@
+<div class="page">
+  <!-- الفلتر الجانبي -->
+  <aside class="filters">
+    <h3>Filters</h3>
+    <div class="filter-group">
+      <label>Specialty</label>
+      <select [(ngModel)]="selectedSpecialty">
+        <option value="">Select specialty</option>
+        @for (s of specialties; track s) {
+          <option [value]="s">{{ s }}</option>
+        }
+      </select>
+    </div>
+    <div class="filter-actions">
+      <button class="btn btn-outline" (click)="resetFilters()">Reset</button>
+    </div>
+  </aside>
+
+  <!-- شبكة الدكاترة -->
+  <section class="content">
+    <div class="content-header">
+      <h2>Our Doctors</h2>
+      <p class="subtitle">Choose the right doctor and book your appointment easily</p>
+    </div>
+
+    @if (loading) {
+      <p class="loading-text">Loading doctors...</p>
+    } @else if (filtered.length === 0) {
+      <p class="loading-text">No doctors found. Try adding doctors from the dashboard.</p>
+    } @else {
+      <div class="doctor-grid">
+        @for (d of filtered; track d._id) {
+          <div class="doctor-card">
+            <div class="avatar">
+              <span>{{ initials(d.name) }}</span>
+            </div>
+            <h4>{{ d.name }}</h4>
+            <p class="specialty">{{ d.specialty }}</p>
+            @if (d.status !== "active") {
+              <span class="badge unavailable">Unavailable</span>
+            }
+            <button
+              class="btn btn-book"
+              [disabled]="d.status !== 'active'"
+              (click)="bookDoctor(d._id)"
+            >
+              Book Now
+            </button>
+          </div>
+        }
+      </div>
+    }
+  </section>
+</div>

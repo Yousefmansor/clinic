@@ -1,0 +1,103 @@
+<div class="dashboard">
+  <!-- الشريط الجانبي -->
+  <aside class="sidebar">
+    <div class="sidebar-logo">
+      <span class="logo-icon">&#10010;</span>
+      <strong>Care Clinic</strong>
+    </div>
+    <nav>
+      <a class="active"><span class="ic ic-grid"></span> Dashboard</a>
+      <a><span class="ic ic-list"></span> Appointments</a>
+      <a><span class="ic ic-user"></span> Doctors</a>
+      <a><span class="ic ic-users"></span> Patients</a>
+    </nav>
+    <nav class="bottom">
+      <a (click)="logout()"><span class="ic ic-logout"></span> Log Out</a>
+    </nav>
+  </aside>
+
+  <!-- المحتوى الرئيسي -->
+  <main class="main">
+    <header class="topbar">
+      <h2>Dashboard</h2>
+      <div class="admin-box">
+        <span>{{ adminName }}</span>
+        <div class="avatar">{{ adminName[0] }}</div>
+      </div>
+    </header>
+
+    <!-- بطاقات الإحصائيات -->
+    <section class="overview">
+      <h3 class="section-title">Overview</h3>
+      <div class="cards">
+        <div class="stat-card">
+          <div class="stat-icon ic ic-grid"></div>
+          <div>
+            <div class="stat-num">{{ total }}</div>
+            <div class="stat-label">Total Appointments — This Day</div>
+          </div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon ic ic-user"></div>
+          <div>
+            <div class="stat-num">{{ newPatients }}</div>
+            <div class="stat-label">New Patients — This Day</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- جدول مواعيد اليوم -->
+    <section class="today-table">
+      <h3 class="section-title">Today's Appointments</h3>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>Actions</th>
+              <th>Status</th>
+              <th>Patient</th>
+              <th>Doctor</th>
+              <th>Time</th>
+            </tr>
+          </thead>
+          <tbody>
+            @if (loading) {
+              <tr>
+                <td colspan="5" class="center">Loading appointments...</td>
+              </tr>
+            } @else if (appointments.length === 0) {
+              <tr>
+                <td colspan="5" class="center">No appointments today.</td>
+              </tr>
+            } @else {
+              @for (a of appointments; track a._id) {
+                <tr>
+                  <td>
+                    <!-- تغيير الحالة بزر التعديل -->
+                    <select
+                      [value]="a.status"
+                      (change)="setStatus(a._id, $any($event.target).value)"
+                    >
+                      <option value="pending">Pending</option>
+                      <option value="confirmed">Confirmed</option>
+                      <option value="cancelled">Cancelled</option>
+                    </select>
+                  </td>
+                  <td>
+                    <span [class]="statusClass(a.status)">
+                      {{ a.status }}
+                    </span>
+                  </td>
+                  <td>{{ a.patient?.name || "-" }}</td>
+                  <td>{{ a.doctor?.name || "-" }}</td>
+                  <td>{{ a.time }}</td>
+                </tr>
+              }
+            }
+          </tbody>
+        </table>
+      </div>
+    </section>
+  </main>
+</div>
