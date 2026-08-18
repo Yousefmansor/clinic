@@ -12,6 +12,8 @@ export interface IDoctor extends Document {
   name: string;
   specialty: string;
   phone: string;
+  bio: string;
+  image: string;
   maxSlotsPerDay: number;
   status: "active" | "inactive" | "on-leave";
   schedule: IDoctorSchedule;
@@ -37,6 +39,8 @@ const doctorSchema = new Schema<IDoctor>(
     name: { type: String, required: true },
     specialty: { type: String, required: true },
     phone: { type: String, required: true },
+    bio: { type: String, default: "" },
+    image: { type: String, default: "" },
     maxSlotsPerDay: { type: Number, default: 10 },
     status: {
       type: String,

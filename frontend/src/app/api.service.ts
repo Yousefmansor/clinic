@@ -80,6 +80,20 @@ export class ApiService {
     });
   }
 
+  // إضافة دكتور جديد (أدمن)
+  createDoctor(body: {
+    name: string;
+    specialty: string;
+    phone: string;
+    bio: string;
+    image: string;
+    schedule: { days: number[]; start: string; end: string; duration: number };
+  }): Observable<any> {
+    return this.http.post(`${BASE}/doctors`, body, {
+      headers: { Authorization: `Bearer ${localStorage.getItem("admin_token") || ""}` },
+    });
+  }
+
   deleteDoctor(id: string): Observable<any> {
     return this.http.delete(`${BASE}/doctors/${id}`, {
       headers: { Authorization: `Bearer ${localStorage.getItem("admin_token") || ""}` },

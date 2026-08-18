@@ -35,6 +35,30 @@ export class DashboardComponent implements OnInit {
   // إدارة الدكاترة
   doctors: Doctor[] = [];
   editingDoctor: Doctor | null = null;
+
+  // نموذج إضافة دكتور جديد
+  showAddForm = false;
+  addName = "";
+  addSpecialty = "";
+  addPhone = "";
+  addBio = "";
+  addImage = "";
+  addDays: boolean[] = [true, true, true, true, true, false, false];
+  addStart = "09:00";
+  addEnd = "17:00";
+  addDuration = 30;
+
+  // قائمة التخصصات المتاحة في نموذج الإضافة
+  specialtyOptions = [
+    "Cardiologist",
+    "Pediatrician",
+    "Orthopedic Surgeon",
+    "Women Health",
+    "General Surgeon",
+    "Dermatologist",
+    "ENT Specialist",
+    "Dentist",
+  ];
   editDays: boolean[] = [];
   editStart = "09:00";
   editEnd = "17:00";
@@ -84,6 +108,7 @@ export class DashboardComponent implements OnInit {
   switchTab(tab: "appointments" | "doctors"): void {
     this.tab = tab;
     this.editingDoctor = null;
+    this.showAddForm = false;
     if (tab === "doctors" && this.doctors.length === 0) {
       this.loadDoctors();
     }
@@ -96,6 +121,63 @@ export class DashboardComponent implements OnInit {
       },
       error: () => {},
     });
+  }
+
+  // فتح نموذج إضافة دكتور جديد
+  openAdd(): void {
+    this.showAddForm = true;
+    this.editingDoctor = null;
+    this.addName = "";
+    this.addSpecialty = this.specialtyOptions[0];
+    this.addPhone = "";
+    this.addBio = "";
+    this.addImage = "";
+    this.addDays = [true, true, true, true, true, false, false];
+    this.addStart = "09:00";
+    this.addEnd = "17:00";
+    this.addDuration = 30;
+  }
+
+  // حفظ الدكتور الجديد
+  saveDoctor(): void {
+    const days = this.addDays
+      .map((v, i) => (v ? i : -1))
+      .filter((i) => i >= 0);
+
+    if (!this.addName.trim() || !this.addSpecialty || !this.addPhone.trim()) {
+      alert("Please fill name, specialty and phone");
+      return;
+    }
+    if (days.length === 0 || this.addStart >= this.addEnd) {
+      alert("Please select at least one working day and valid hours");
+      return;
+    }
+
+    this.api
+      .createDoctor({
+        name: this.addName.trim(),
+        specialty: this.addSpecialty,
+        phone: this.addPhone.trim(),
+        bio: this.addBio.trim(),
+        image: this.addImage.trim(),
+        schedule: {
+          days,
+          start: this.addStart,
+          end: this.addEnd,
+          duration: this.addDuration,
+        },
+      })
+      .subscribe({
+        next: () => {
+          this.showAddForm = false;
+          this.loadDoctors();
+        },
+        error: () => {},
+      });
+  }
+
+  cancelAdd(): void {
+    this.showAddForm = false;
   }
 
   // فتح نموذج تعديل جدول الدكتور

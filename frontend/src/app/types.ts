@@ -20,6 +20,8 @@ export interface Doctor {
   maxSlotsPerDay: number;
   status: "active" | "inactive" | "on-leave";
   schedule: DoctorSchedule;
+  bio?: string;
+  image?: string;
 }
 
 export interface Patient {

@@ -119,7 +119,78 @@
           only be able to book within these times.
         </p>
 
+        <div class="tab-header-row">
+          <button class="btn btn-primary" (click)="openAdd()">+ Add Doctor</button>
+        </div>
+
         <div class="doctors-grid">
+          <!-- نموذج إضافة دكتور جديد -->
+          @if (showAddForm) {
+            <div class="doctor-card add-card">
+              <strong class="add-title">New Doctor</strong>
+              <div class="add-fields">
+                <div class="form-group">
+                  <label>Full Name</label>
+                  <input type="text" [(ngModel)]="addName" placeholder="Dr. John Doe" />
+                </div>
+                <div class="form-group">
+                  <label>Specialty</label>
+                  <select [(ngModel)]="addSpecialty">
+                    @for (s of specialtyOptions; track s) {
+                      <option [value]="s">{{ s }}</option>
+                    }
+                  </select>
+                </div>
+                <div class="form-group">
+                  <label>Phone</label>
+                  <input type="text" [(ngModel)]="addPhone" placeholder="01012345678" />
+                </div>
+                <div class="form-group">
+                  <label>Short Bio</label>
+                  <textarea [(ngModel)]="addBio" placeholder="Experience summary..."></textarea>
+                </div>
+                <div class="form-group">
+                  <label>Photo URL (optional)</label>
+                  <input type="text" [(ngModel)]="addImage" placeholder="https://..." />
+                </div>
+              </div>
+
+              <label class="edit-label">Working Days</label>
+              <div class="days-row">
+                @for (d of dayNames; track d; let i = $index) {
+                  <label class="day-chip">
+                    <input type="checkbox" [(ngModel)]="addDays[i]" />
+                    {{ d.slice(0, 3) }}
+                  </label>
+                }
+              </div>
+
+              <div class="edit-row">
+                <div class="form-group">
+                  <label>Start</label>
+                  <input type="time" [(ngModel)]="addStart" />
+                </div>
+                <div class="form-group">
+                  <label>End</label>
+                  <input type="time" [(ngModel)]="addEnd" />
+                </div>
+                <div class="form-group">
+                  <label>Duration (min)</label>
+                  <select [(ngModel)]="addDuration">
+                    <option [ngValue]="15">15</option>
+                    <option [ngValue]="30">30</option>
+                    <option [ngValue]="45">45</option>
+                    <option [ngValue]="60">60</option>
+                  </select>
+                </div>
+              </div>
+
+              <div class="edit-actions">
+                <button class="btn btn-outline" (click)="cancelAdd()">Cancel</button>
+                <button class="btn btn-primary" (click)="saveDoctor()">Add Doctor</button>
+              </div>
+            </div>
+          }
           @for (doc of doctors; track doc._id) {
             <div class="doctor-card" [class.editing]="editingDoctor?._id === doc._id">
               <div class="doctor-head">
