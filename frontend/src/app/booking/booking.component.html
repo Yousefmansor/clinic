@@ -30,6 +30,10 @@
     <h2>Booking Form</h2>
     @if (doctor) {
       <p class="subtitle">Booking with <strong>{{ doctor.name }}</strong> — {{ doctor.specialty }}</p>
+      <p class="schedule-hint">
+        Working hours: {{ doctor.schedule.start }} — {{ doctor.schedule.end }}
+        ({{ doctor.schedule.duration }} min per visit)
+      </p>
     }
 
     @if (loading) {
@@ -53,7 +57,7 @@
     } @else {
       <p class="subtitle">Please fill in the following information to book an appointment.</p>
 
-      <!-- الخطوة 1: بيانات المريض -->
+      <!-- الخطوة 1: بيانات المريض + التاريخ والوقت -->
       @if (step === 1) {
         <div class="form-section">
           <h4>Patient Information</h4>
@@ -68,34 +72,6 @@
               />
             </div>
             <div class="form-group">
-              <label>Date & Time *</label>
-              <div class="datetime-row">
-                <div class="form-group">
-                  <label>Select Date *</label>
-                  <input type="date" [(ngModel)]="date" />
-                </div>
-                <div class="form-group">
-                  <label>Select Time *</label>
-                  <div class="time-grid">
-                    @for (t of timeSlots; track t) {
-                      <button
-                        type="button"
-                        class="time-chip"
-                        [class.selected]="time === t"
-                        (click)="time = t"
-                      >
-                        {{ t }}
-                      </button>
-                    }
-                  </div>
-                  <small class="hint">All times are according to your local time zone</small>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <div class="form-row">
-            <div class="form-group">
               <label>Phone Number *</label>
               <div class="phone-row">
                 <select [(ngModel)]="countryCode">
@@ -108,30 +84,68 @@
             </div>
           </div>
 
-          <div class="form-group">
-            <label>Visit Type</label>
-            <div class="radio-row">
-              <label class="radio-label">
-                <input type="radio" name="visit" value="new" [(ngModel)]="visitType" />
-                New Patient
-              </label>
-              <label class="radio-label">
-                <input type="radio" name="visit" value="returning" [(ngModel)]="visitType" />
-                Returning Patient
-              </label>
+          <div class="form-row">
+            <div class="form-group">
+              <label>Visit Type</label>
+              <div class="radio-row">
+                <label class="radio-label">
+                  <input type="radio" name="visit" value="new" [(ngModel)]="visitType" />
+                  New Patient
+                </label>
+                <label class="radio-label">
+                  <input type="radio" name="visit" value="returning" [(ngModel)]="visitType" />
+                  Returning Patient
+                </label>
+              </div>
             </div>
+          </div>
+        </div>
+
+        <!-- الخطوة 2 (ضمن الصفحة الأولى): اختيار التاريخ والوقت حسب جدول الدكتور -->
+        <div class="form-section">
+          <h4>Date & Time *</h4>
+
+          <div class="form-group">
+            <label>Select Date *</label>
+            <input type="date" [(ngModel)]="date" (change)="onDateChange()" [min]="minDate()" />
+            <small class="hint">Only the doctor's working days are available</small>
           </div>
 
           <div class="form-group">
-            <label class="checkbox-label">
-              <input type="checkbox" [(ngModel)]="generalConsultation" />
-              General Consultation
-            </label>
-            <label class="checkbox-label">
-              <input type="checkbox" [(ngModel)]="followUp" />
-              Follow up
-            </label>
+            <label>Select Time *</label>
+            @if (loadingSlots) {
+              <p class="loading-text">Loading available times...</p>
+            } @else if (!date) {
+              <p class="empty-text">Please choose a date first</p>
+            } @else if (timeSlots.length === 0) {
+              <p class="empty-text">No available times on this day</p>
+            } @else {
+              <div class="time-grid">
+                @for (t of timeSlots; track t) {
+                  <button
+                    type="button"
+                    class="time-chip"
+                    [class.selected]="time === t"
+                    (click)="time = t"
+                  >
+                    {{ t }}
+                  </button>
+                }
+              </div>
+            }
+            <small class="hint">Times are based on the doctor's working schedule</small>
           </div>
+        </div>
+
+        <div class="form-group">
+          <label class="checkbox-label">
+            <input type="checkbox" [(ngModel)]="generalConsultation" />
+            General Consultation
+          </label>
+          <label class="checkbox-label">
+            <input type="checkbox" [(ngModel)]="followUp" />
+            Follow up
+          </label>
         </div>
       } @else {
         <!-- الخطوة 2: التأكيد -->

@@ -1,5 +1,17 @@
 // الواجهات المشتركة بين الفرونت إند والباك إند
 
+// جدول عمل الدكتور: الأيام المتاحة + ساعات الشغل
+export interface DoctorSchedule {
+  // days: أرقام الأيام المتاحة (0=الأحد، 1=الاثنين، ... 6=السبت)
+  days: number[];
+  // start: بداية الشغل مثل "09:00"
+  start: string;
+  // end: نهاية الشغل مثل "17:00"
+  end: string;
+  // duration: مدة الموعد بالدقائق مثل 30 أو 60
+  duration: number;
+}
+
 export interface Doctor {
   _id: string;
   name: string;
@@ -7,6 +19,7 @@ export interface Doctor {
   phone: string;
   maxSlotsPerDay: number;
   status: "active" | "inactive" | "on-leave";
+  schedule: DoctorSchedule;
 }
 
 export interface Patient {

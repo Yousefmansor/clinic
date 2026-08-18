@@ -6,10 +6,18 @@
       <strong>Care Clinic</strong>
     </div>
     <nav>
-      <a class="active"><span class="ic ic-grid"></span> Dashboard</a>
-      <a><span class="ic ic-list"></span> Appointments</a>
-      <a><span class="ic ic-user"></span> Doctors</a>
-      <a><span class="ic ic-users"></span> Patients</a>
+      <a
+        [class.active]="tab === 'appointments'"
+        (click)="switchTab('appointments')"
+      >
+        <span class="ic ic-list"></span> Appointments
+      </a>
+      <a
+        [class.active]="tab === 'doctors'"
+        (click)="switchTab('doctors')"
+      >
+        <span class="ic ic-user"></span> Doctors
+      </a>
     </nav>
     <nav class="bottom">
       <a (click)="logout()"><span class="ic ic-logout"></span> Log Out</a>
@@ -26,78 +34,166 @@
       </div>
     </header>
 
-    <!-- بطاقات الإحصائيات -->
-    <section class="overview">
-      <h3 class="section-title">Overview</h3>
-      <div class="cards">
-        <div class="stat-card">
-          <div class="stat-icon ic ic-grid"></div>
-          <div>
-            <div class="stat-num">{{ total }}</div>
-            <div class="stat-label">Total Appointments — This Day</div>
+    <!-- ================= تبويب المواعيد ================= -->
+    @if (tab === "appointments") {
+      <section class="overview">
+        <h3 class="section-title">Overview</h3>
+        <div class="cards">
+          <div class="stat-card">
+            <div class="stat-icon ic ic-grid"></div>
+            <div>
+              <div class="stat-num">{{ total }}</div>
+              <div class="stat-label">Total Appointments — This Day</div>
+            </div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-icon ic ic-user"></div>
+            <div>
+              <div class="stat-num">{{ newPatients }}</div>
+              <div class="stat-label">New Patients — This Day</div>
+            </div>
           </div>
         </div>
-        <div class="stat-card">
-          <div class="stat-icon ic ic-user"></div>
-          <div>
-            <div class="stat-num">{{ newPatients }}</div>
-            <div class="stat-label">New Patients — This Day</div>
-          </div>
-        </div>
-      </div>
-    </section>
+      </section>
 
-    <!-- جدول مواعيد اليوم -->
-    <section class="today-table">
-      <h3 class="section-title">Today's Appointments</h3>
-      <div class="table-wrap">
-        <table>
-          <thead>
-            <tr>
-              <th>Actions</th>
-              <th>Status</th>
-              <th>Patient</th>
-              <th>Doctor</th>
-              <th>Time</th>
-            </tr>
-          </thead>
-          <tbody>
-            @if (loading) {
+      <section class="today-table">
+        <h3 class="section-title">Today's Appointments</h3>
+        <div class="table-wrap">
+          <table>
+            <thead>
               <tr>
-                <td colspan="5" class="center">Loading appointments...</td>
+                <th>Actions</th>
+                <th>Status</th>
+                <th>Patient</th>
+                <th>Doctor</th>
+                <th>Time</th>
               </tr>
-            } @else if (appointments.length === 0) {
-              <tr>
-                <td colspan="5" class="center">No appointments today.</td>
-              </tr>
-            } @else {
-              @for (a of appointments; track a._id) {
+            </thead>
+            <tbody>
+              @if (loading) {
                 <tr>
-                  <td>
-                    <!-- تغيير الحالة بزر التعديل -->
-                    <select
-                      [value]="a.status"
-                      (change)="setStatus(a._id, $any($event.target).value)"
-                    >
-                      <option value="pending">Pending</option>
-                      <option value="confirmed">Confirmed</option>
-                      <option value="cancelled">Cancelled</option>
-                    </select>
-                  </td>
-                  <td>
-                    <span [class]="statusClass(a.status)">
-                      {{ a.status }}
-                    </span>
-                  </td>
-                  <td>{{ a.patient?.name || "-" }}</td>
-                  <td>{{ a.doctor?.name || "-" }}</td>
-                  <td>{{ a.time }}</td>
+                  <td colspan="5" class="center">Loading appointments...</td>
                 </tr>
+              } @else if (appointments.length === 0) {
+                <tr>
+                  <td colspan="5" class="center">No appointments today.</td>
+                </tr>
+              } @else {
+                @for (a of appointments; track a._id) {
+                  <tr>
+                    <td>
+                      <select
+                        [value]="a.status"
+                        (change)="setStatus(a._id, $any($event.target).value)"
+                      >
+                        <option value="pending">Pending</option>
+                        <option value="confirmed">Confirmed</option>
+                        <option value="cancelled">Cancelled</option>
+                      </select>
+                    </td>
+                    <td>
+                      <span [class]="statusClass(a.status)">
+                        {{ a.status }}
+                      </span>
+                    </td>
+                    <td>{{ a.patient?.name || "-" }}</td>
+                    <td>{{ a.doctor?.name || "-" }}</td>
+                    <td>{{ a.time }}</td>
+                  </tr>
+                }
               }
-            }
-          </tbody>
-        </table>
-      </div>
-    </section>
+            </tbody>
+          </table>
+        </div>
+      </section>
+    }
+
+    <!-- ================= تبويب الدكاترة (إدارة الجدول) ================= -->
+    @if (tab === "doctors") {
+      <section class="doctors-tab">
+        <h3 class="section-title">
+          Doctors — Working Days & Hours
+        </h3>
+        <p class="tab-hint">
+          Set each doctor's available days and working hours. Patients will
+          only be able to book within these times.
+        </p>
+
+        <div class="doctors-grid">
+          @for (doc of doctors; track doc._id) {
+            <div class="doctor-card" [class.editing]="editingDoctor?._id === doc._id">
+              <div class="doctor-head">
+                <div class="avatar">{{ doc.name[0] }}</div>
+                <div>
+                  <strong>{{ doc.name }}</strong>
+                  <small>{{ doc.specialty }}</small>
+                </div>
+              </div>
+
+              @if (editingDoctor?._id === doc._id) {
+                <!-- نموذج تعديل الجدول -->
+                <div class="edit-form">
+                  <label class="edit-label">Working Days</label>
+                  <div class="days-row">
+                    @for (d of dayNames; track d; let i = $index) {
+                      <label class="day-chip">
+                        <input
+                          type="checkbox"
+                          [(ngModel)]="editDays[i]"
+                        />
+                        {{ d.slice(0, 3) }}
+                      </label>
+                    }
+                  </div>
+
+                  <div class="edit-row">
+                    <div class="form-group">
+                      <label>Start</label>
+                      <input type="time" [(ngModel)]="editStart" />
+                    </div>
+                    <div class="form-group">
+                      <label>End</label>
+                      <input type="time" [(ngModel)]="editEnd" />
+                    </div>
+                    <div class="form-group">
+                      <label>Duration (min)</label>
+                      <select [(ngModel)]="editDuration">
+                        <option [ngValue]="15">15</option>
+                        <option [ngValue]="30">30</option>
+                        <option [ngValue]="45">45</option>
+                        <option [ngValue]="60">60</option>
+                      </select>
+                    </div>
+                  </div>
+
+                  <div class="edit-actions">
+                    <button class="btn btn-outline" (click)="cancelEdit()">Cancel</button>
+                    <button class="btn btn-primary" (click)="saveSchedule()">Save</button>
+                  </div>
+                </div>
+              } @else {
+                <!-- عرض الجدول الحالي -->
+                <div class="schedule-info">
+                  <div class="sched-days">
+                    <strong>Days:</strong>
+                    {{ dayList(doc) }}
+                  </div>
+                  <div>
+                    <strong>Hours:</strong> {{ doc.schedule.start }} — {{ doc.schedule.end }}
+                  </div>
+                  <div>
+                    <strong>Per visit:</strong> {{ doc.schedule.duration }} min
+                  </div>
+                </div>
+                <div class="doctor-actions">
+                  <button class="btn btn-outline small" (click)="openEdit(doc)">Edit Schedule</button>
+                  <button class="btn btn-danger small" (click)="deleteDoctor(doc._id)">Delete</button>
+                </div>
+              }
+            </div>
+          }
+        </div>
+      </section>
+    }
   </main>
 </div>

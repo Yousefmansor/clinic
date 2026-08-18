@@ -5,28 +5,19 @@ import { FormsModule } from "@angular/forms";
 import { ApiService } from "../api.service";
 import { Doctor } from "../types";
 
-// أوقات المواعيد المتاحة خلال اليوم (مثل الواير فريم)
-const TIME_SLOTS = [
-  "09:00 AM",
-  "09:30 AM",
-  "10:00 AM",
-  "10:30 AM",
-  "11:00 AM",
-  "11:30 AM",
-  "12:00 PM",
-  "12:30 PM",
-  "01:30 PM",
-  "02:00 PM",
-  "02:30 PM",
-  "03:00 PM",
-  "03:30 PM",
-  "04:00 PM",
-  "04:30 PM",
-  "05:00 PM",
-];
-
 // خيارات الكود الدولي
 const COUNTRY_CODES = ["+20", "+966", "+971", "+996", "+1"];
+
+// أسماء الأيام بالإنجليزية لعرضها في الاختيار
+const DAY_NAMES = [
+  "Sunday",
+  "Monday",
+  "Tuesday",
+  "Wednesday",
+  "Thursday",
+  "Friday",
+  "Saturday",
+];
 
 @Component({
   selector: "app-booking",
@@ -37,7 +28,7 @@ const COUNTRY_CODES = ["+20", "+966", "+971", "+996", "+1"];
 export class BookingComponent implements OnInit {
   doctor: Doctor | null = null;
 
-  // الخطوة الحالية (1: بيانات المريض، 2: التاريخ والوقت)
+  // الخطوة الحالية (1: بيانات المريض + التاريخ والوقت، 2: التأكيد)
   step = 1;
 
   // بيانات المريض
@@ -51,12 +42,14 @@ export class BookingComponent implements OnInit {
   // التاريخ والوقت
   date = "";
   time = "";
-  timeSlots = TIME_SLOTS;
+  timeSlots: string[] = [];
+  dayNames = DAY_NAMES;
 
   // رسالة النجاح أو الخطأ
   message = "";
   done = false;
   loading = true;
+  loadingSlots = false;
 
   constructor(
     private api: ApiService,
@@ -66,7 +59,7 @@ export class BookingComponent implements OnInit {
 
   ngOnInit(): void {
     const id = this.route.snapshot.paramMap.get("doctorId") || "";
-    // تحميل بيانات الدكتور المختار
+    // تحميل بيانات الدكتور المختار (ومعه جدول عمله)
     this.api.getDoctors().subscribe({
       next: (res) => {
         this.doctor = res.data.find((d) => d._id === id) || null;
@@ -82,7 +75,40 @@ export class BookingComponent implements OnInit {
     return COUNTRY_CODES;
   }
 
-  // الانتقال للخطوة الثانية بعد التحقق من الحقول
+  // هل اليوم من أيام عمل الدكتور؟
+  isWorkingDay(dateStr: string): boolean {
+    if (!this.doctor) return false;
+    const d = new Date(dateStr + "T00:00:00");
+    return this.doctor.schedule.days.includes(d.getDay());
+  }
+
+  // تحميل السلات المتاحة عند اختيار التاريخ
+  onDateChange(): void {
+    this.time = "";
+    this.timeSlots = [];
+    this.message = "";
+    if (!this.date || !this.doctor) return;
+
+    if (!this.isWorkingDay(this.date)) {
+      this.message = "This doctor does not work on this day";
+      return;
+    }
+
+    // جلب السلات المتاحة من الباك إند بناءً على جدول الدكتور
+    this.loadingSlots = true;
+    this.api.getAvailableSlots(this.doctor._id, this.date).subscribe({
+      next: (res) => {
+        this.timeSlots = res.data.slots;
+        this.loadingSlots = false;
+      },
+      error: () => {
+        this.loadingSlots = false;
+        this.timeSlots = [];
+      },
+    });
+  }
+
+  // الانتقال لخطوة التأكيد بعد التحقق من الحقول
   nextStep(): void {
     this.message = "";
     if (!this.fullName.trim() || !this.phone.trim()) {
@@ -90,7 +116,7 @@ export class BookingComponent implements OnInit {
       return;
     }
     if (!this.date || !this.time) {
-      this.message = "Please select a date and a time";
+      this.message = "Please select an available date and time";
       return;
     }
     this.step = 2;
@@ -141,6 +167,12 @@ export class BookingComponent implements OnInit {
             err?.error?.message || "Failed to save your data. Please try again.";
         },
       });
+  }
+
+  // أقل تاريخ مسموح = اليوم
+  minDate(): string {
+    const d = new Date();
+    return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
   }
 
   goHome(): void {

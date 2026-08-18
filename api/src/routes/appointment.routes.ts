@@ -6,6 +6,7 @@ const router = Router();
 
 router.get("/", requireAdmin, appointmentController.list);
 router.get("/today", requireAdmin, appointmentController.today);
+router.get("/available-slots", appointmentController.availableSlots);
 router.post("/", appointmentController.create);
 router.patch("/:id/status", requireAdmin, appointmentController.updateStatus);
 router.delete("/:id", requireAdmin, appointmentController.remove);

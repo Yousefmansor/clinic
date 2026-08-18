@@ -16,6 +16,26 @@ export class ApiService {
     return this.http.get<{ success: boolean; data: Doctor[] }>(`${BASE}/doctors`);
   }
 
+  // جلب السلات المتاحة لدكتور في تاريخ معين
+  getAvailableSlots(
+    doctorId: string,
+    date: string,
+  ): Observable<{ success: boolean; data: { slots: string[]; date: string } }> {
+    return this.http.get<any>(`${BASE}/appointments/available-slots`, {
+      params: { doctorId, date },
+    });
+  }
+
+  // تعديل جدول عمل الدكتور (أدمن)
+  updateSchedule(
+    doctorId: string,
+    schedule: { days: number[]; start: string; end: string; duration: number },
+  ): Observable<any> {
+    return this.http.patch(`${BASE}/doctors/${doctorId}`, { schedule }, {
+      headers: { Authorization: `Bearer ${localStorage.getItem("admin_token") || ""}` },
+    });
+  }
+
   // ---------------- المرضى ----------------
   createPatient(body: {
     name: string;
@@ -56,6 +76,12 @@ export class ApiService {
 
   updateStatus(id: string, status: string): Observable<any> {
     return this.http.patch(`${BASE}/appointments/${id}/status`, { status }, {
+      headers: { Authorization: `Bearer ${localStorage.getItem("admin_token") || ""}` },
+    });
+  }
+
+  deleteDoctor(id: string): Observable<any> {
+    return this.http.delete(`${BASE}/doctors/${id}`, {
       headers: { Authorization: `Bearer ${localStorage.getItem("admin_token") || ""}` },
     });
   }
