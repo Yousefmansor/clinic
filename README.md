@@ -1,12 +1,12 @@
 # NTI MEAN Assignments — Yousef Mansour
 
-يحتوي هذا المستودع على واجبات التدريب السابقة، بالإضافة إلى المشروع النهائي.
+This repository contains the previous NTI MEAN course assignments together with the final project.
 
-| المحتوى | المكان |
+| Content | Location |
 |---|---|
-| المشروع النهائي: Care Clinic — Doctor Booking System | [`Final Project/`](./Final%20Project/) |
-| تعليمات التشغيل والتفاصيل | [`Final Project/README.md`](./Final%20Project/README.md) |
-| بنك أسئلة المناقشة بالعربية | [`Final Project/CARE_CLINIC_ORAL_EXAM_QA_AR.md`](./Final%20Project/CARE_CLINIC_ORAL_EXAM_QA_AR.md) |
-| واجبات الأيام السابقة | `Day 1` إلى `Day 4 - 5` |
+| Final project: Care Clinic — Doctor Booking System | [`Final Project/`](./Final%20Project/) |
+| Setup and project documentation | [`Final Project/README.md`](./Final%20Project/README.md) |
+| Arabic oral-exam question bank | [`Final Project/CARE_CLINIC_ORAL_EXAM_QA_AR.md`](./Final%20Project/CARE_CLINIC_ORAL_EXAM_QA_AR.md) |
+| Earlier course assignments | `Day 1` through `Day 4 - 5` |
 
-> افتح مجلد **Final Project** للوصول إلى التطبيق كاملًا: `api` للـ Backend و`frontend` للـ Angular Frontend.
+> Open **Final Project** to access the complete application: `api` contains the backend and `frontend` contains the Angular client.
