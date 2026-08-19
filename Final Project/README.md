@@ -20,8 +20,7 @@ Final Project/
 │       ├── booking/                  # Multi-step booking form
 │       ├── admin-login/              # Admin login page
 │       └── dashboard/                # Protected admin dashboard
-├── README.md                         # Project guide
-└── CARE_CLINIC_ORAL_EXAM_QA_AR.md    # Arabic oral-exam study guide
+└── README.md                         # Project guide
 ```
 
 ## Features
@@ -137,5 +136,3 @@ In development mode, `proxy.conf.json` forwards Angular requests starting with `
 | Backend | Node.js, Express, TypeScript |
 | Database | MongoDB with Mongoose |
 | Authentication | JSON Web Token and bcryptjs |
-
-> Review `CARE_CLINIC_ORAL_EXAM_QA_AR.md` when preparing for the project discussion. It contains Arabic questions and model answers based on the actual project code.

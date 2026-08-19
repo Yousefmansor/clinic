@@ -6,7 +6,6 @@ This repository contains the previous NTI MEAN course assignments together with 
 |---|---|
 | Final project: Care Clinic — Doctor Booking System | [`Final Project/`](./Final%20Project/) |
 | Setup and project documentation | [`Final Project/README.md`](./Final%20Project/README.md) |
-| Arabic oral-exam question bank | [`Final Project/CARE_CLINIC_ORAL_EXAM_QA_AR.md`](./Final%20Project/CARE_CLINIC_ORAL_EXAM_QA_AR.md) |
 | Earlier course assignments | `Day 1` through `Day 4 - 5` |
 
 > Open **Final Project** to access the complete application: `api` contains the backend and `frontend` contains the Angular client.
