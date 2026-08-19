@@ -69,7 +69,7 @@ The template uses the local database URL below. Change only the secret value if 
 
 ```env
 PORT=4000
-MONGO_URI=mongodb://127.0.0.1:27017/care-clinic
+MONGODB_URI=mongodb://localhost:27017/care-clinic
 JWT_SECRET=replace-this-with-a-long-random-secret
 ```
 
