@@ -2,6 +2,7 @@ import "dotenv/config";
 import mongoose from "mongoose";
 import app from "./app";
 import { seedAdmin } from "./controllers/auth.controller";
+import { seedDoctors } from "./data/default-doctors";
 
 const PORT = process.env.PORT || 4000;
 const MONGO_URI = process.env.MONGO_URI || "mongodb://localhost:27017/care-clinic";
@@ -11,8 +12,9 @@ mongoose
   .connect(MONGO_URI)
   .then(async () => {
     console.log("Connected to MongoDB");
-    // إنشاء أدمن افتراضي لو مش موجود
+    // Create default admin and sample doctors only for an empty database.
     await seedAdmin();
+    await seedDoctors();
     app.listen(PORT, () => {
       console.log(`Server running on port ${PORT}`);
     });

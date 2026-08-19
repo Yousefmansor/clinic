@@ -56,12 +56,22 @@ cd api
 npm install
 ```
 
-Create a file named `.env` inside the `api` folder with these values:
+Create the local environment file from the included template:
+
+```bash
+# macOS / Linux
+cp .env.example .env
+
+# Windows Command Prompt
+copy .env.example .env
+```
+
+The template uses the local database URL below. Change only the secret value if desired:
 
 ```env
 PORT=4000
-MONGO_URI=mongodb://localhost:27017/care-clinic
-JWT_SECRET=your-secret-key
+MONGO_URI=mongodb://127.0.0.1:27017/care-clinic
+JWT_SECRET=replace-this-with-a-long-random-secret
 ```
 
 Then start the API server:
@@ -76,7 +86,9 @@ The API runs at:
 http://localhost:4000
 ```
 
-On the first run, the application creates the default admin account if it does not already exist:
+On the first run, the application creates the default admin account and eight sample doctors if the database is empty. This makes a fresh local installation immediately ready for demonstration.
+
+The default admin account is:
 
 | Field | Value |
 |---|---|

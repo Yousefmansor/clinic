@@ -1,13 +1,13 @@
 import { Component, OnInit } from "@angular/core";
 import { CommonModule } from "@angular/common";
-import { Router, RouterLink } from "@angular/router";
+import { Router } from "@angular/router";
 import { FormsModule } from "@angular/forms";
 import { ApiService } from "../api.service";
 import { Doctor } from "../types";
 
 @Component({
   selector: "app-doctors",
-  imports: [CommonModule, FormsModule, RouterLink],
+  imports: [CommonModule, FormsModule],
   templateUrl: "./doctors.component.html",
   styleUrl: "./doctors.component.css",
 })
